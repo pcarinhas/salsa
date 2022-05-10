@@ -4,3 +4,4 @@ build:
 
 clean:
 	rm -rf dist
+	rm -rf .mypy_cache
