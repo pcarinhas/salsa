@@ -3,6 +3,7 @@ import logging
 import os
 import pathlib
 import re
+import sys
 import subprocess
 from enum import Enum, unique
 
@@ -91,17 +92,23 @@ def folder_cmd(folder, cmd, verbose=False, stdout=False):
     return error
 
 
-def get_package_root():
+def get_package_Root():
     """Get the root path of the current package, using Git.
 
     Returns: pathlib.Path() if exists, or None
     """
+    root = "."
+    # Current path, wherever you happen to be.
     path = pathlib.Path()
     try:
         git_repo = git.Repo(path, search_parent_directories=True)
 
     except InvalidGitRepositoryError:
         LOG.warning("Invalid Git path: %s", path.resolve())
+        return None
+
+    except FileNotFoundError:
+        LOG.warning("FileNotFound: %s", root)
         return None
 
     except Exception as ex:
@@ -188,6 +195,8 @@ def append_string_to_file(string, path):
     """Append to a pathlib file: path"""
     with path.open("a") as _f:
         _f.write(string)
+        return True
+    return False
 
 
 def replace_text_in_file(original_text, final_text, path):
